@@ -10,7 +10,7 @@ import collections
 import hexgrid
 
 __author__ = "Ross Anderson <ross.anderson@ualberta.ca>"
-__version__ = "0.5.9"
+__version__ = "0.5.10"
 
 
 class CatanLog(object):
