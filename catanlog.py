@@ -10,7 +10,7 @@ import collections
 import hexgrid
 
 __author__ = "Ross Anderson <ross.anderson@ualberta.ca>"
-__version__ = "0.5.5"
+__version__ = "0.5.6"
 
 
 class CatanLog(object):
@@ -147,7 +147,7 @@ class CatanLog(object):
         """
         self.reset()
         self._set_players(players)
-        self.logln('{} {}'.format(name(), version()))
+        self.logln('{} {}'.format(__name__, __version__))
         self.logln('timestamp: {0}'.format(self.timestamp))
         self._log_players(players)
         self._log_board_terrain(terrain)
