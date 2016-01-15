@@ -18,4 +18,7 @@ setup(name="catanlog",
       license="GPLv3",
 
       py_modules=["catanlog"],
+      install_requires=[
+          'hexgrid',
+      ],
 	)
