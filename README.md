@@ -25,14 +25,14 @@ Therefore, each `.catan` file contains sufficient information to 'replay' a game
 The header begins with a version, and ends with `...CATAN!`. The game begins after that.
 
 Tiles are numbered 1 through 19 starting from the most northwest tile and spiralling countercockwise inward.
-See module hexgrid (`hexgrid.py`) for details.
+See module `hexgrid` (https://github.com/rosshamish/hexgrid) for details.
 
 The format is not yet v1.0, and could change at any time until then.
 
 Example
 
 ```
-catanlog v0.5.5
+catanlog v0.5.8
 timestamp: 2015-12-30 03:21:56.572418
 players: 4
 name: yurick, color: green, seat: 1
