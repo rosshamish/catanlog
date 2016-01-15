@@ -30,6 +30,7 @@ See module hexgrid (`hexgrid.py`) for details.
 The format is not yet v1.0, and could change at any time until then.
 
 Example
+
 ```
 catanlog v0.5.5
 timestamp: 2015-12-30 03:21:56.572418
