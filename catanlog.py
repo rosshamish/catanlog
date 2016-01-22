@@ -9,6 +9,9 @@ import sys
 import collections
 import hexgrid
 
+import version
+__version__ = version.__version__
+
 
 class CatanLog(object):
     """
@@ -37,7 +40,6 @@ class CatanLog(object):
 
     TODO maybe log private information as well (which dev card picked up, which card stolen)
     """
-
     def __init__(self, auto_flush=True, log_dir='log', use_stdout=False):
         """
         Create a CatanLog object using the given options. The defaults are fine.
