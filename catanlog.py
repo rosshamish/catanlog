@@ -9,9 +9,6 @@ import sys
 import collections
 import hexgrid
 
-__author__ = "Ross Anderson <ross.anderson@ualberta.ca>"
-__version__ = "0.5.10"
-
 
 class CatanLog(object):
     """
@@ -394,3 +391,16 @@ class CatanLog(object):
         _players.sort(key=lambda p: p.seat)
         for p in _players:
             self.players.append(p)
+
+
+class NoopCatanLog(object):
+    """
+    class NoopCatanLog implements no-op versions of all methods defined by CatanLog.
+
+    It can be used in place of a CatanLog instance if the caller does not want any
+    logging to occur.
+    """
+    def __getattr__(self, name):
+        def method(*args):
+            return None
+        return method
