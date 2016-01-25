@@ -9,8 +9,7 @@ import sys
 import collections
 import hexgrid
 
-import version
-__version__ = version.__version__
+from version import __version__
 
 
 class CatanLog(object):
