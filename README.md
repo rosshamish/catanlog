@@ -1,9 +1,11 @@
 catanlog
 --------
 
-reference implementation for the catanlog (.catan) file format
-
 This project introduces a machine-parsable, human-readable file format for describing a game of Catan.
+
+It serves the same purpose as a chess move list - it fully describes an entire game.
+
+This package is intended to support broadcast tooling (e.g. [catan-spectator](https://github.com/rosshamish/catan-spectator)), AI development (e.g. [goodcatan](https://github.com/rosshamish/goodcatan)), and other pursuits which benefit from well-defined game logs.
 
 Until a formal specification is written, this implementation serves as the specification. The spec will likely be formalized once stable, after v1.0.0
 
