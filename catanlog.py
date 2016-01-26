@@ -6,7 +6,6 @@ See class CatanLog for documentation.
 import datetime
 import os
 import sys
-import collections
 import hexgrid
 
 __version__ = '0.5.14'
