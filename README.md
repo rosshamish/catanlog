@@ -134,11 +134,12 @@ same.
 ```
 log.log_player_plays_dev_XYZ
 
-green plays dev card: knight, moves robber to 1, steals from red
-blue plays dev card: road builder, builds at (1 SW) and (1 W)
-orange plays dev card: year of plenty, takes wood and brick
-red plays dev card: monopoly on ore
-green plays dev card: victory point
+green plays knight
+green moves robber to 1, steals from red
+blue plays road builder, builds at (1 SW) and (1 W)
+orange plays year of plenty, takes wood and brick
+red plays monopoly on ore
+green plays victory point
 ```
 
 - End of turn. Thinking about changing syntax to "$color passes dice to $color".
