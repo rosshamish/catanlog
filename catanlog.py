@@ -3,6 +3,7 @@ module catanlog provides a reference implementation for the catanlog (.catan) fi
 
 See class CatanLog for documentation.
 """
+import copy
 import datetime
 import os
 import sys
@@ -32,6 +33,7 @@ class CatanLog(object):
     - $location is a tile identifier and an optional direction, eg 1, 2, (1 NW), (2 W)
     - $port is the name of a port, eg 4:1, 3:1, wood, brick, wheat
     - $resource is the name of a terrain, resource, or card, eg wood, brick, wheat
+    - $num is an integer value on the range [0,inf)
 
     Use #dump to get the log as a string.
     Use #flush to write the log to a file.
@@ -53,7 +55,8 @@ class CatanLog(object):
         self._log_dir = log_dir
         self._use_stdout = use_stdout
 
-        self.timestamp = datetime.datetime.now()
+        self.game_start_timestamp = datetime.datetime.now()
+        self.latest_timestamp = copy.deepcopy(self.game_start_timestamp)
         self.players = list()
 
     def log(self, content):
@@ -82,7 +85,7 @@ class CatanLog(object):
         """
         self._log = ''
         self._chars_flushed = 0
-        self.timestamp = datetime.datetime.now()
+        self.game_start_timestamp = datetime.datetime.now()
 
     def dump(self):
         """
@@ -106,7 +109,7 @@ class CatanLog(object):
         The logpath changes when reset() or _set_players() are called, as they change the
         timestamp and the players, respectively.
         """
-        name = '{}-{}.catan'.format(self.timestamp.isoformat(), '-'.join([p.name for p in self.players]))
+        name = '{}-{}.catan'.format(self.game_start_timestamp.isoformat(), '-'.join([p.name for p in self.players]))
         path = os.path.join(self._log_dir, name)
         if not os.path.exists(self._log_dir):
             os.mkdir(self._log_dir)
@@ -145,7 +148,7 @@ class CatanLog(object):
         self.reset()
         self._set_players(players)
         self.logln('{} {}'.format(__name__, __version__))
-        self.logln('timestamp: {0}'.format(self.timestamp))
+        self.logln('timestamp: {0}'.format(self.game_start_timestamp))
         self._log_players(players)
         self._log_board_terrain(terrain)
         self._log_board_numbers(numbers)
@@ -316,9 +319,11 @@ class CatanLog(object):
 
     def log_player_ends_turn(self, player):
         """
-        syntax: $color ends turn
+        syntax: $color ends turn after $(num)s
         """
-        self.logln('{0} ends turn'.format(player.color))
+        seconds_delta = (datetime.datetime.now() - self.latest_timestamp).total_seconds()
+        self.logln('{0} ends turn after {1}s'.format(player.color, round(seconds_delta)))
+        self.latest_timestamp = datetime.datetime.now()
 
     def log_player_wins(self, player):
         """
@@ -357,7 +362,7 @@ class CatanLog(object):
 
     def _log_board_ports(self, ports):
         """
-        syntax: ports: ($port$location )*
+        syntax: ports: ($port$location)*
 
         A board with no ports is allowed.
 
