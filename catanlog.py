@@ -48,22 +48,22 @@ class CatanLog(object):
         :param log_dir: directory to write the log to, str
         :param use_stdout: if True, flush() will write to stdout instead of to file
         """
-        self._log = str()
+        self._buffer = str()
 
         self._chars_flushed = 0
         self._auto_flush = auto_flush
         self._log_dir = log_dir
         self._use_stdout = use_stdout
 
-        self.game_start_timestamp = datetime.datetime.now()
-        self.latest_timestamp = copy.deepcopy(self.game_start_timestamp)
-        self.players = list()
+        self._game_start_timestamp = datetime.datetime.now()
+        self._latest_timestamp = copy.deepcopy(self._game_start_timestamp)
+        self._players = list()
 
     def _dolog(self, content):
         """
         Write a string to the log
         """
-        self._log += content
+        self._buffer += content
         if self._auto_flush:
             self.flush()
 
@@ -77,27 +77,27 @@ class CatanLog(object):
         """
         Erase the latest line from the log
         """
-        self._log = '\n'.join(self._log.split('\n')[:-2])
+        self._buffer = '\n'.join(self._buffer.split('\n')[:-2])
 
     def reset(self):
         """
         Erase the log and reset the timestamp
         """
-        self._log = ''
+        self._buffer = ''
         self._chars_flushed = 0
-        self.game_start_timestamp = datetime.datetime.now()
+        self._game_start_timestamp = datetime.datetime.now()
 
     def dump(self):
         """
         Dump the entire log to a string, and return it
         """
-        return self._log
+        return self._buffer
 
     def _latest(self):
         """
         Get all characters written to _log since the last flush()
         """
-        return self._log[self._chars_flushed:]
+        return self._buffer[self._chars_flushed:]
 
     def logpath(self):
         """
@@ -109,7 +109,7 @@ class CatanLog(object):
         The logpath changes when reset() or _set_players() are called, as they change the
         timestamp and the players, respectively.
         """
-        name = '{}-{}.catan'.format(self.game_start_timestamp.isoformat(), '-'.join([p.name for p in self.players]))
+        name = '{}-{}.catan'.format(self._game_start_timestamp.isoformat(), '-'.join([p.name for p in self._players]))
         path = os.path.join(self._log_dir, name)
         if not os.path.exists(self._log_dir):
             os.mkdir(self._log_dir)
@@ -148,7 +148,7 @@ class CatanLog(object):
         self.reset()
         self._set_players(players)
         self._logln('{} {}'.format(__name__, __version__))
-        self._logln('timestamp: {0}'.format(self.game_start_timestamp))
+        self._logln('timestamp: {0}'.format(self._game_start_timestamp))
         self._log_players(players)
         self._log_board_terrain(terrain)
         self._log_board_numbers(numbers)
@@ -320,9 +320,9 @@ class CatanLog(object):
         """
         syntax: $color ends turn after $(num)s
         """
-        seconds_delta = (datetime.datetime.now() - self.latest_timestamp).total_seconds()
+        seconds_delta = (datetime.datetime.now() - self._latest_timestamp).total_seconds()
         self._logln('{0} ends turn after {1}s'.format(player.color, round(seconds_delta)))
-        self.latest_timestamp = datetime.datetime.now()
+        self._latest_timestamp = datetime.datetime.now()
 
     def log_player_wins(self, player):
         """
@@ -383,18 +383,18 @@ class CatanLog(object):
         )+
         """
         self._logln('players: {0}'.format(len(players)))
-        for p in self.players:
+        for p in self._players:
             self._logln('name: {0}, color: {1}, seat: {2}'.format(p.name, p.color, p.seat))
 
     def _set_players(self, _players):
         """
         Players will always be set in seat order (1,2,3,4)
         """
-        self.players = list()
+        self._players = list()
         _players = list(_players)
         _players.sort(key=lambda p: p.seat)
         for p in _players:
-            self.players.append(p)
+            self._players.append(p)
 
 
 class NoopCatanLog(object):
