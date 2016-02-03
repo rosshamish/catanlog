@@ -9,7 +9,7 @@ import os
 import sys
 import hexgrid
 
-__version__ = '0.8.14'
+__version__ = '0.9.0'
 
 
 class CatanLog(object):
@@ -109,11 +109,15 @@ class CatanLog(object):
         The logpath changes when reset() or _set_players() are called, as they change the
         timestamp and the players, respectively.
         """
-        name = '{}-{}.catan'.format(self._game_start_timestamp.isoformat(), '-'.join([p.name for p in self._players]))
+        name = '{}-{}.catan'.format(self.timestamp_str(),
+                                    '-'.join([p.name for p in self._players]))
         path = os.path.join(self._log_dir, name)
         if not os.path.exists(self._log_dir):
             os.mkdir(self._log_dir)
         return path
+
+    def timestamp_str(self):
+        return self._game_start_timestamp.strftime('%Y-%m-%d %H:%M:%S')
 
     def flush(self):
         """
@@ -147,8 +151,8 @@ class CatanLog(object):
         """
         self.reset()
         self._set_players(players)
-        self._logln('{} {}'.format(__name__, __version__))
-        self._logln('timestamp: {0}'.format(self._game_start_timestamp))
+        self._logln('{} v{}'.format(__name__, __version__))
+        self._logln('timestamp: {0}'.format(self.timestamp_str()))
         self._log_players(players)
         self._log_board_terrain(terrain)
         self._log_board_numbers(numbers)
@@ -161,8 +165,7 @@ class CatanLog(object):
 
         alternate syntax: if roll == 2, syntax: $color rolls $number ...DEUCES!
         """
-        self._logln('{0} rolls {1} {2}'.format(player.color, roll,
-                                            '...DEUCES!' if int(roll) == 2 else ''))
+        self._logln('{0} rolls {1}{2}'.format(player.color, roll, ' ...DEUCES!' if int(roll) == 2 else ''))
 
     def log_player_moves_robber_and_steals(self, player, tile_id, victim):
         """

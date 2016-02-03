@@ -1,3 +1,3 @@
 # remember to update __version__ in catanlog.py 
 # when updating this one
-__version__ = '0.8.14'
+__version__ = '0.9.0'
