@@ -2,13 +2,6 @@ from behave import *
 from catan import boardbuilder
 from catan.game import Player
 
-import catanlog
-
-
-@given('we have a logger')
-def step_logger(context):
-    context.logger = catanlog.CatanLog(auto_flush=True, log_dir='spec/log', use_stdout=False)
-
 
 @given('we have the default players')
 def step_default_players(context):

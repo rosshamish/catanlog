@@ -1,8 +1,7 @@
 Feature: writing .catan-formatted game logs
 
   Scenario: log a game start
-    Given we have a logger
-    and we have the default players
+    Given we have the default players
     and we have the default board
     When we log a game start
     Then it will look like
@@ -21,14 +20,12 @@ Feature: writing .catan-formatted game logs
       """
 
   Scenario: log a dice roll which is not 2
-    Given we have a logger
-    and it is "red"s turn
+    Given it is "red"s turn
     When we log a dice roll "6"
     Then it will look exactly like "red rolls 6"
 
   Scenario: log a dice roll of 2
-    Given we have a logger
-    and it is "blue"s turn
+    Given it is "blue"s turn
     When we log a dice roll "2"
     Then it will look exactly like "blue rolls 2 ...DEUCES!"
 
