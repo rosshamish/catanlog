@@ -40,8 +40,6 @@ The format is not yet v1.0, and could change at any time until then. The version
 v1.0.0:
 - test suite which enforces the syntax
 - decide logged/not-logged for a) dev card types and b) *which* card was stolen in a robber move
-- consolidate buy/build/play actions: issue #1
-- decide to support timestamps-per-action or not: issue #2
 
 Locations are integer coordinates of tiles, nodes and edges, as defined and computed by
 module [`hexgrid`](https://github.com/rosshamish/hexgrid). Use it!
@@ -142,12 +140,12 @@ red plays monopoly on ore
 green plays victory point
 ```
 
-- End of turn. Thinking about changing syntax to "$color passes dice to $color".
+- End of turn. The length of the turn is logged, rounded to the nearest second.
 
 ```
 log.log_player_ends_turn
 
-green ends turn
+green ends turn after 15s
 ```
 
 - End of game.
