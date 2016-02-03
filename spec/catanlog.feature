@@ -24,12 +24,12 @@ Feature: writing .catan-formatted game logs
     Given we have a logger
     and it is "red"s turn
     When we log a dice roll "6"
-    Then it will look like "red rolls 6"
+    Then it will look exactly like "red rolls 6"
 
   Scenario: log a dice roll of 2
     Given we have a logger
     and it is "blue"s turn
     When we log a dice roll "2"
-    Then it will look like "blue rolls 2 ...DEUCES!"
+    Then it will look exactly like "blue rolls 2 ...DEUCES!"
 
 
