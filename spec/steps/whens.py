@@ -9,7 +9,7 @@ def output_of(log, method, *args, **kwargs):
     return lines
 
 
-@when('we log a game start')
+@when('the game starts')
 def step_game_start(context):
     terrain = list()
     numbers = list()
@@ -24,7 +24,7 @@ def step_game_start(context):
                                context.board.ports)
 
 
-@when('we log a dice roll "{roll}"')
+@when('a "{roll}" is rolled')
 def step_roll(context, roll):
     context.output = output_of(context.logger,
                                catanlog.CatanLog.log_player_roll,

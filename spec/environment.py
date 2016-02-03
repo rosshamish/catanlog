@@ -6,6 +6,7 @@ def before_scenario(context, scenario):
     # create a catanlog
     context.logger = catanlog.CatanLog(auto_flush=True, log_dir='spec/log', use_stdout=False)
 
+
 def after_scenario(context, scenario):
     # erase the log file after each scenario
     with open(context.logger.logpath(), 'w'):
