@@ -8,7 +8,7 @@ import datetime
 import os
 import sys
 
-__version__ = '0.9.1'
+__version__ = '0.9.2'
 
 
 class CatanLog(object):
@@ -218,23 +218,23 @@ class CatanLog(object):
         :param to_port: list of tuples: [(2, 'wood'), (2, 'brick')]
         :param to_player: list of tuples: [(1, 'ore'), (1, 'sheep')]
         """
-        self._log('{0} trades '.format(player))
+        self._log('{0} trades '.format(player.color))
 
-        # to_other items
+        # to_port items
         self._log('[')
         for i, (num, res) in enumerate(to_port):
             if i > 0:
-                self._log(',')
+                self._log(', ')
             self._log('{0} {1}'.format(num, res))
         self._log(']')
 
-        self._log(' to port {0} for '.format(port))
+        self._log(' to port {0} for '.format(port.type.value))
 
         # to_player items
         self._log('[')
         for i, (num, res) in enumerate(to_player):
             if i > 0:
-                self._log(',')
+                self._log(', ')
             self._log('{0} {1}'.format(num, res))
         self._log(']')
 
@@ -247,7 +247,7 @@ class CatanLog(object):
         :param to_other: list of tuples: [(2, 'wood'), (2, 'brick')]
         :param to_player: list of tuples: [(1, 'ore'), (1, 'sheep')]
         """
-        self._log('{0} trades '.format(player))
+        self._log('{0} trades '.format(player.color))
 
         # to_other items
         self._log('[')
@@ -257,7 +257,7 @@ class CatanLog(object):
             self._log('{0} {1}'.format(num, res))
         self._log(']')
 
-        self._log(' to player {0} for '.format(other))
+        self._log(' to player {0} for '.format(other.color))
 
         # to_player items
         self._log('[')

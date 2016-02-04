@@ -7,7 +7,7 @@ Feature: logging of trades between player<->port, and player<->player
 
   Scenario: compound trade between player and 3:1 port
     Given it is "white"s turn
-    When they trade "3" "wood" and "3 brick" for "ore" with a "3:1" port
+    When they compound trade "3" "wood" and "3" "brick" for "ore" with a "3:1" port
     Then it should look exactly like "white trades [3 wood, 3 brick] to port 3:1 for [2 ore]"
 
   Scenario: basic trade between player and 4:1 port
@@ -43,4 +43,4 @@ Feature: logging of trades between player<->port, and player<->player
   Scenario: trade between two players
     Given it is "red"s turn
     When they trade "1" "wood" and "1" "brick" to player "red" for "2" "ore"
-    Then it should look exactly like "red trades [1 wood, 1 brick] to player red for [2 ore]
+    Then it should look exactly like "red trades [1 wood, 1 brick] to player red for [2 ore]"

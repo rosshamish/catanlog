@@ -1,7 +1,7 @@
 from behave import *
-import hexgrid
-from catan.game import Player
 import catanlog
+import catan.game
+import catan.board
 
 
 def output_of(log, method, *args, **kwargs):
@@ -34,6 +34,29 @@ def step_impl(context, roll):
                                roll)
 
 
+@when('they win the game')
+def step_impl(context):
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_wins,
+                               context.cur_player)
+
+
+@when('they end their turn')
+def step_impl(context):
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_ends_turn,
+                               context.cur_player)
+
+
+@when('they move the robber to "{location}" and steal from "{color}"')
+def step_impl(context, location, color):
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_moves_robber_and_steals,
+                               context.cur_player,
+                               location,
+                               catan.game.Player(1, 'name', color))
+
+
 @when('they buy a "{piece}" and build it at "{location}"')
 def step_impl(context, piece, location):
     if piece == 'road':
@@ -64,7 +87,7 @@ def step_impl(context, location, color):
                                catanlog.CatanLog.log_player_plays_dev_knight,
                                context.cur_player,
                                location,
-                               Player(1, 'name', color))
+                               catan.game.Player(1, 'name', color))
 
 
 @when('they play a road builder, building at "{location1}" and "{location2}"')
@@ -98,3 +121,70 @@ def step_impl(context):
     context.output = output_of(context.logger,
                                catanlog.CatanLog.log_player_plays_dev_victory_point,
                                context.cur_player)
+
+
+@when('they trade "{give}" for "{get}" with a "{port}" port')
+def step_impl(context, give, get, port):
+    valid_resources = {'wood', 'brick', 'wheat', 'sheep', 'ore'}
+    if port == '4:1':
+        num_give = 4
+    elif port == '3:1':
+        num_give = 3
+    elif port in valid_resources:
+        num_give = 2
+    else:
+        raise ValueError('invalid port: {}'.format(port))
+
+    if give not in valid_resources:
+        raise ValueError('invalid resource to give: {}'.format(give))
+
+    if get not in valid_resources:
+        raise ValueError('invalid resource to get: {}'.format(get))
+
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_trades_with_port,
+                               context.cur_player,
+                               [(num_give, give)],
+                               catan.board.Port(1, 'N', catan.board.PortType(port)),
+                               [(1, get)])
+
+
+@when('they compound trade "{num_give1}" "{give1}" and "{num_give2}" "{give2}" for "{get}" with a "{port}" port')
+def step_impl(context, num_give1, give1, num_give2, give2, get, port):
+    valid_resources = {'wood', 'brick', 'wheat', 'sheep', 'ore'}
+    valid_ports = {'4:1', '3:1'}
+    for res in valid_resources:
+        valid_ports.add(res)
+
+    if give1 not in valid_resources:
+        raise ValueError('invalid resource to give: {}'.format(give1))
+    if give2 not in valid_resources:
+        raise ValueError('invalid resource to give: {}'.format(give2))
+    if get not in valid_resources:
+        raise ValueError('invalid resource to get: {}'.format(get))
+
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_trades_with_port,
+                               context.cur_player,
+                               [(num_give1, give1), (num_give2, give2)],
+                               catan.board.Port(1, 'N', catan.board.PortType(port)),
+                               [(2, get)])
+
+
+@when('they trade "{num_give1}" "{give1}" and "{num_give2}" "{give2}" to player "{color}" for "{num_get}" "{get}"')
+def step_impl(context, num_give1, give1, num_give2, give2, color, num_get, get):
+    valid_resources = {'wood', 'brick', 'wheat', 'sheep', 'ore'}
+
+    if give1 not in valid_resources:
+        raise ValueError('invalid resource to give: {}'.format(give1))
+    if give2 not in valid_resources:
+        raise ValueError('invalid resource to give: {}'.format(give2))
+    if get not in valid_resources:
+        raise ValueError('invalid resource to get: {}'.format(get))
+
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_trades_with_other,
+                               context.cur_player,
+                               [(num_give1, give1), (num_give2, give2)],
+                               catan.game.Player(1, 'name', color),
+                               [(num_get, get)])
