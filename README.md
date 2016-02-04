@@ -36,15 +36,24 @@ board layout |
 gameplay     | Body
 ```
 
+The specification is defined by .feature files in `spec/`. The `.feature` files are human-readable. They are executed
+using [behave](https://github.com/behave/behave).
+
+`$ behave spec/`
+
 The format is not yet v1.0, and could change at any time until then. The version is listed in version.py. Todos before
 v1.0.0:
-- test suite which enforces the syntax
 - decide logged/not-logged for a) dev card types and b) *which* card was stolen in a robber move
 
-Locations are integer coordinates of tiles, nodes and edges, as defined and computed by
-module [`hexgrid`](https://github.com/rosshamish/hexgrid). Use it!
+### Usage
 
-Coordinates are written to the log as (tile, direction) tuples for human readability. They look like this:
+There is one method in class CatanLog for each loggable action.
+
+Some methods expect parameters of types defined in module [`catan`](https://github.com/rosshamish/catan-py). Methods are
+documented individually, check the docstring.
+
+Methods which take a `location` expect location strings as computed by method `location()` in
+module [`hexgrid`](https://github.com/rosshamish/hexgrid). Use it! Locations look like this:
 
 ```
 1         # the tile in the northwest corner
@@ -52,13 +61,10 @@ Coordinates are written to the log as (tile, direction) tuples for human readabi
 (1 NW)    # the edge on the northwest corner of the board (road)
 ```
 
-### Usage
+The tile numbers start from 1 in the northwest corner, and increase counterclockwise, spiralling inwards. See the
+documentation of [`hexgrid`](https://github.com/rosshamish/hexgrid) for more info.
 
-Each method of `catanlog.CatanLog` writes a single line to the log file (except `log_game_start`).
-There is one method for each loggable action.
-
-Many methods have parameter types from module [`catan`](https://github.com/rosshamish/catan-py) as parameters.
-It isn't always obvious which type a parameter expects. That's a todo.
+Examples:
 
 - Import it, create a logger
 
@@ -89,7 +95,7 @@ ports: wood(8 SE) brick(9 E) ... ore(2 W)  3:1(10 NE)    #
 - Rolling. Players are named by their color. Two is the only special one.
 
 ```
-log.log_roll
+log.log_player_roll(player, roll)
 
 green rolls 4
 blue rolls 10
@@ -99,7 +105,7 @@ orange rolls 2 ...DEUCES!
 - Moving the robber on a 7.
 
 ```
-log.log_player_moves_robber_and_steals
+log.log_player_moves_robber_and_steals(player, location, victim)
 
 green moves robber to 1, steals from red
 ```
@@ -107,7 +113,10 @@ green moves robber to 1, steals from red
 - Buying and building. Note that the dev card type is not logged. This might change.
 
 ```
-log.log_player_buys_XYZ
+log.log_player_buys_road(player, location)
+log.log_player_buys_settlement(player, location)
+log.log_player_buys_city(player, city)
+log.log_player_buys_dev_card(player)
 
 green buys settlement, builds at (1 NW)
 blue buys city, builds at (1 SE)
@@ -118,19 +127,22 @@ red buys dev card
 - Trading. Multiple port trades in a turn can (and should) be consolidated into large port transactions.
 
 ```
-log.log_player_trades_with_(player|port)
+log.log_player_trades_with_port(player, to_port, port, to_player)
+log.log_player_trades_with_other_player(player, to_other, other, to_player)
 
 green trades [1 wheat, 1 brick] to player red for [1 sheep]
 blue trades [3 wheat] to port 3:1 for [1 sheep]
 orange trades [6 wheat] to port wheat for [3 ore]
 ```
 
-- Dev cards. Note that when a knight is played and the robber is moved, one line is logged.
-This differs from when a 7 is rolled and the robber is moved, when two lines are logged. They should probably be the
-same.
+- Dev cards.
 
 ```
-log.log_player_plays_dev_XYZ
+log.log_player_plays_knight(player, location, victim)
+log.log_player_plays_road_builder(player, location1, location2)
+log.log_player_plays_year_of_plenty(player, resource1, resource2)
+log.log_player_plays_monopoly(player, resource)
+log.log_player_plays_victory_point(player)
 
 green plays knight
 green moves robber to 1, steals from red

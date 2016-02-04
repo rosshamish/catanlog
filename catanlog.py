@@ -8,7 +8,7 @@ import datetime
 import os
 import sys
 
-__version__ = '0.9.2'
+__version__ = '0.9.3'
 
 
 class CatanLog(object):
@@ -23,16 +23,6 @@ class CatanLog(object):
            rolls, purchases, etc.
 
     The files are explicitly versioned by the class variable version, and versioning follows semver.
-
-    See individual methods' documentation for syntax and intent. Syntax variables are as follows:
-    - $color is the color of a player, eg 'red', 'blue', 'green', 'orange'
-    - $name is the name of a player, eg 'josh', 'yurick', 'zach', 'ross'
-    - $seat is the seat number of a player, eg 1, 2, 3, 4
-    - $number is an integer number, eg 7, 2, 3, 11, 12
-    - $location is a tile identifier and an optional direction, eg 1, 2, (1 NW), (2 W)
-    - $port is the name of a port, eg 4:1, 3:1, wood, brick, wheat
-    - $resource is the name of a terrain, resource, or card, eg wood, brick, wheat
-    - $num is an integer value on the range [0,inf)
 
     Use #dump to get the log as a string.
     Use #flush to write the log to a file.
@@ -143,10 +133,10 @@ class CatanLog(object):
 
         The robber is assumed to start on the desert (or off-board).
 
-        :param players: set of 3 or (ideally) 4 Players
-        :param terrain: list of 19 Terrains. Proper rules: 3 each of (brick, ore), 4 each of all others
-        :param numbers: list of 19 HexNumbers. Proper rules: 1 each of (2, 12), 2 each of all others.
-        :param ports: list of Ports
+        :param players: iterable of catan.game.Player objects
+        :param terrain: list of 19 catan.board.Terrain objects.
+        :param numbers: list of 19 catan.board.HexNumber objects.
+        :param ports: list of catan.board.Port objects.
         """
         self.reset()
         self._set_players(players)
@@ -160,25 +150,37 @@ class CatanLog(object):
 
     def log_player_roll(self, player, roll):
         """
-        syntax: $color rolls $number
-
-        alternate syntax: if roll == 2, syntax: $color rolls $number ...DEUCES!
+        :param player: catan.game.Player
+        :param roll: integer or string, the sum of the dice
         """
         self._logln('{0} rolls {1}{2}'.format(player.color, roll, ' ...DEUCES!' if int(roll) == 2 else ''))
 
-    def log_player_moves_robber_and_steals(self, player, tile_id, victim):
+    def log_player_moves_robber_and_steals(self, player, location, victim):
         """
-        syntax: $color moves robber to $location, steals from $color
+        :param player: catan.game.Player
+        :param location: string, see hexgrid.location()
+        :param victim: catan.game.Player
         """
         self._logln('{0} moves robber to {1}, steals from {2}'.format(
             player.color,
-            tile_id,
+            location,
             victim.color
+        ))
+
+    def log_player_buys_road(self, player, location):
+        """
+        :param player: catan.game.Player
+        :param location: string, see hexgrid.location()
+        """
+        self._logln('{0} buys road, builds at {1}'.format(
+            player.color,
+            location
         ))
 
     def log_player_buys_settlement(self, player, location):
         """
-        syntax: $color buys settlement, builds at $location
+        :param player: catan.game.Player
+        :param location: string, see hexgrid.location()
         """
         self._logln('{0} buys settlement, builds at {1}'.format(
             player.color,
@@ -187,7 +189,8 @@ class CatanLog(object):
 
     def log_player_buys_city(self, player, location):
         """
-        syntax: $color buys city, builds at $location
+        :param player: catan.game.Player
+        :param location: string, see hexgrid.location()
         """
         self._logln('{0} buys city, builds at {1}'.format(
             player.color,
@@ -196,27 +199,18 @@ class CatanLog(object):
 
     def log_player_buys_dev_card(self, player):
         """
-        syntax: $color buys dev card
+        :param player: catan.game.Player
         """
         self._logln('{0} buys dev card'.format(
             player.color
         ))
 
-    def log_player_buys_road(self, player, location):
-        """
-        syntax: $color buys road, builds at $location
-        """
-        self._logln('{0} buys road, builds at {1}'.format(
-            player.color,
-            location
-        ))
-
     def log_player_trades_with_port(self, player, to_port, port, to_player):
         """
-        syntax: $color trades $number $resource[, $number resource]* to port $port for $number $resource[, $number resource]*
-
-        :param to_port: list of tuples: [(2, 'wood'), (2, 'brick')]
-        :param to_player: list of tuples: [(1, 'ore'), (1, 'sheep')]
+        :param player: catan.game.Player
+        :param to_port: list of tuples, [(int, game.board.Terrain), (int, game.board.Terrain)]
+        :param port: catan.board.Port
+        :param to_player: list of tuples, [(int, game.board.Terrain), (int, game.board.Terrain)]
         """
         self._log('{0} trades '.format(player.color))
 
@@ -225,7 +219,7 @@ class CatanLog(object):
         for i, (num, res) in enumerate(to_port):
             if i > 0:
                 self._log(', ')
-            self._log('{0} {1}'.format(num, res))
+            self._log('{0} {1}'.format(num, res.value))
         self._log(']')
 
         self._log(' to port {0} for '.format(port.type.value))
@@ -235,17 +229,17 @@ class CatanLog(object):
         for i, (num, res) in enumerate(to_player):
             if i > 0:
                 self._log(', ')
-            self._log('{0} {1}'.format(num, res))
+            self._log('{0} {1}'.format(num, res.value))
         self._log(']')
 
         self._log('\n')
 
-    def log_player_trades_with_other(self, player, to_other, other, to_player):
+    def log_player_trades_with_other_player(self, player, to_other, other, to_player):
         """
-        syntax: $color trades [$number $resources, $number resources] to player $color for [$number $resources, $number resources]
-
-        :param to_other: list of tuples: [(2, 'wood'), (2, 'brick')]
-        :param to_player: list of tuples: [(1, 'ore'), (1, 'sheep')]
+        :param player: catan.game.Player
+        :param to_other: list of tuples, [(int, game.board.Terrain), (int, game.board.Terrain)]
+        :param other: catan.board.Player
+        :param to_player: list of tuples, [(int, game.board.Terrain), (int, game.board.Terrain)]
         """
         self._log('{0} trades '.format(player.color))
 
@@ -254,7 +248,7 @@ class CatanLog(object):
         for i, (num, res) in enumerate(to_other):
             if i > 0:
                 self._log(', ')
-            self._log('{0} {1}'.format(num, res))
+            self._log('{0} {1}'.format(num, res.value))
         self._log(']')
 
         self._log(' to player {0} for '.format(other.color))
@@ -264,48 +258,25 @@ class CatanLog(object):
         for i, (num, res) in enumerate(to_player):
             if i > 0:
                 self._log(', ')
-            self._log('{0} {1}'.format(num, res))
+            self._log('{0} {1}'.format(num, res.value))
         self._log(']')
 
         self._log('\n')
 
-    def log_player_plays_dev_knight(self, player, tile_id, victim):
+    def log_player_plays_knight(self, player, location, victim):
         """
-        syntax (two lines):
-        $color plays knight
-        $color moves robber to $location, steals from $color
+        :param player: catan.game.Player
+        :param location: string, see hexgrid.location()
+        :param victim: catan.game.Player
         """
         self._logln('{0} plays knight'.format(player.color))
-        self.log_player_moves_robber_and_steals(player, tile_id, victim)
+        self.log_player_moves_robber_and_steals(player, location, victim)
 
-    def log_player_plays_dev_monopoly(self, player, resource):
+    def log_player_plays_road_builder(self, player, location1, location2):
         """
-        syntax: $color plays monopoly on $resource
-        """
-        self._logln('{0} plays monopoly on {1}'.format(
-            player.color,
-            resource
-        ))
-
-    def log_player_plays_dev_year_of_plenty(self, player, resource1, resource2):
-        """
-        syntax: $color plays year of plenty, takes $resource and $resource
-        """
-        self._logln('{0} plays year of plenty, takes {1} and {2}'.format(
-            player.color,
-            resource1,
-            resource2
-        ))
-
-    def log_player_plays_dev_victory_point(self, player):
-        """
-        syntax: $color plays victory point
-        """
-        self._logln('{0} plays victory point'.format(player.color))
-
-    def log_player_plays_dev_road_builder(self, player, location1, location2):
-        """
-        syntax: $color plays road builder, builds at $location and $location
+        :param player: catan.game.Player
+        :param location1: string, see hexgrid.location()
+        :param location2: string, see hexgrid.location()
         """
         self._logln('{0} plays road builder, builds at {1} and {2}'.format(
             player.color,
@@ -313,9 +284,37 @@ class CatanLog(object):
             location2
         ))
 
+    def log_player_plays_year_of_plenty(self, player, resource1, resource2):
+        """
+        :param player: catan.game.Player
+        :param resource1: catan.board.Terrain
+        :param resource2: catan.board.Terrain
+        """
+        self._logln('{0} plays year of plenty, takes {1} and {2}'.format(
+            player.color,
+            resource1.value,
+            resource2.value
+        ))
+
+    def log_player_plays_monopoly(self, player, resource):
+        """
+        :param player: catan.game.Player
+        :param resource: catan.board.Terrain
+        """
+        self._logln('{0} plays monopoly on {1}'.format(
+            player.color,
+            resource.value
+        ))
+
+    def log_player_plays_victory_point(self, player):
+        """
+        :param player: catan.game.Player
+        """
+        self._logln('{0} plays victory point'.format(player.color))
+
     def log_player_ends_turn(self, player):
         """
-        syntax: $color ends turn after $(num)s
+        :param player: catan.game.Player
         """
         seconds_delta = (datetime.datetime.now() - self._latest_timestamp).total_seconds()
         self._logln('{0} ends turn after {1}s'.format(player.color, round(seconds_delta)))
@@ -323,50 +322,37 @@ class CatanLog(object):
 
     def log_player_wins(self, player):
         """
-        syntax: $color wins
+        :param player: catan.game.Player
         """
         self._logln('{0} wins'.format(player.color))
 
     def _log_board_terrain(self, terrain):
         """
-        syntax: terrain: ($resource ){19}
-
         Tiles are logged counterclockwise beginning from the top-left.
-        See module hexgrid (hexgrid.py) for the tile layout.
+        See module hexgrid (https://github.com/rosshamish/hexgrid) for the tile layout.
 
-        There are 19 tiles in the base catan board.
-
-        :param terrain: list of 19 resources in models.Terrain, eg ['wood', 'brick', 'wood', 'desert', 'ore', ...]
+        :param terrain: list of catan.board.Terrain objects
         """
         self._logln('terrain: {0}'.format(' '.join(t.value for t in terrain)))
 
     def _log_board_numbers(self, numbers):
         """
-        syntax: numbers: ($number ){19}
-
         Numbers are logged counterclockwise beginning from the top-left.
-        See module hexgrid (hexgrid.py) for the tile layout.
+        See module hexgrid (https://github.com/rosshamish/hexgrid) for the tile layout.
 
-        There are 19 tiles in the base catan board.
-
-        None designates a tile where there is no number. Usually, this is
-        the desert.
-
-        :param numbers: list of 19 HexNumbers
+        :param numbers: list of catan.board.HexNumber objects.
         """
         self._logln('numbers: {0}'.format(' '.join(str(n.value) for n in numbers)))
 
     def _log_board_ports(self, ports):
         """
-        syntax: ports: ($port$location)*
-
         A board with no ports is allowed.
 
         In the logfile, ports must be sorted
         - ascending by tile identifier (primary)
         - alphabetical by edge direction (secondary)
 
-        :param ports: list of Ports
+        :param ports: list of catan.board.Port objects
         """
         ports = sorted(ports, key=lambda port: (port.tile_id, port.direction))
         self._logln('ports: {0}'.format(' '.join('{}({} {})'.format(p.type.value, p.tile_id, p.direction)
@@ -374,10 +360,7 @@ class CatanLog(object):
 
     def _log_players(self, players):
         """
-        syntax:
-        players: $number
-        (name: $name, color: $color, seat: $number
-        )+
+        :param players: list of catan.game.Player objects
         """
         self._logln('players: {0}'.format(len(players)))
         for p in self._players:
