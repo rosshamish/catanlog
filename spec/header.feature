@@ -14,7 +14,7 @@ Feature: logging of the game header
     name: josh, color: blue, seat: 3
     name: yuri, color: green, seat: 4
     terrain: wood wheat ore wheat sheep brick sheep wheat wood ore brick desert wheat sheep wood ore sheep wood brick
-    numbers: 6 4 8 3 6 4 8 11 5 3 9 None 9 12 5 10 2 10 11
+    numbers: 5 2 6 3 8 10 9 12 11 4 8 None 10 9 4 5 6 3 11
     ports: 3:1\(1 NW\) wood\(2 W\) brick\(4 W\) 3:1\(5 SW\) 3:1\(6 SE\) sheep\(8 SE\) 3:1\(9 E\) ore\(10 NE\) wheat\(12 NE\)
     ...CATAN!
     """
