@@ -7,9 +7,8 @@ import copy
 import datetime
 import os
 import sys
-import hexgrid
 
-__version__ = '0.9.0'
+__version__ = '0.9.1'
 
 
 class CatanLog(object):
@@ -177,21 +176,19 @@ class CatanLog(object):
             victim.color
         ))
 
-    def log_player_buys_settlement(self, player, node):
+    def log_player_buys_settlement(self, player, location):
         """
         syntax: $color buys settlement, builds at $location
         """
-        location = hexgrid.location(hexgrid.NODE, node)
         self._logln('{0} buys settlement, builds at {1}'.format(
             player.color,
             location
         ))
 
-    def log_player_buys_city(self, player, node):
+    def log_player_buys_city(self, player, location):
         """
         syntax: $color buys city, builds at $location
         """
-        location = hexgrid.location(hexgrid.NODE, node)
         self._logln('{0} buys city, builds at {1}'.format(
             player.color,
             location
@@ -205,11 +202,10 @@ class CatanLog(object):
             player.color
         ))
 
-    def log_player_buys_road(self, player, edge):
+    def log_player_buys_road(self, player, location):
         """
         syntax: $color buys road, builds at $location
         """
-        location = hexgrid.location(hexgrid.EDGE, edge)
         self._logln('{0} buys road, builds at {1}'.format(
             player.color,
             location
@@ -307,12 +303,10 @@ class CatanLog(object):
         """
         self._logln('{0} plays victory point'.format(player.color))
 
-    def log_player_plays_dev_road_builder(self, player, edge1, edge2):
+    def log_player_plays_dev_road_builder(self, player, location1, location2):
         """
         syntax: $color plays road builder, builds at $location and $location
         """
-        location1 = hexgrid.location(hexgrid.EDGE, edge1)
-        location2 = hexgrid.location(hexgrid.EDGE, edge2)
         self._logln('{0} plays road builder, builds at {1} and {2}'.format(
             player.color,
             location1,
