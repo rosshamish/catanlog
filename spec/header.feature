@@ -4,7 +4,7 @@ Feature: logging of the game header
     Given we have the default players
     And we have the default board
     When the game starts
-    Then it will look like
+    Then it should look like
     """
     catanlog v\d+\.\d+\.\d+
     timestamp: \d{4}-[01]\d-[0-3]\d [0-2]\d:[0-5]\d:[0-5]\d

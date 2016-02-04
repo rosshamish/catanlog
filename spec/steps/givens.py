@@ -4,7 +4,7 @@ from catan.game import Player
 
 
 @given('we have the default players')
-def step_default_players(context):
+def step_impl(context):
     context.players = [Player(1, 'ross', 'red'),
                        Player(2, 'zach', 'orange'),
                        Player(3, 'josh', 'blue'),
@@ -12,7 +12,7 @@ def step_default_players(context):
 
 
 @given('we have the default board')
-def step_default_board(context):
+def step_impl(context):
     context.board = boardbuilder.build({
         'terrain': 'preset',
         'numbers': 'preset',
@@ -21,10 +21,10 @@ def step_default_board(context):
 
 
 @given('it is the first player\'s turn')
-def step_first_player(context):
+def step_impl(context):
     context.cur_player = context.players[0]
 
 
 @given('it is "{color}"s turn')
-def step_colors_turn(context, color):
+def step_impl(context, color):
     context.cur_player = Player(1, 'name', color)
