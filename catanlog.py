@@ -275,7 +275,7 @@ class CatanLog(object):
         $color plays knight
         $color moves robber to $location, steals from $color
         """
-        self._logln('{0} plays knight'.format(player))
+        self._logln('{0} plays knight'.format(player.color))
         self.log_player_moves_robber_and_steals(player, tile_id, victim)
 
     def log_player_plays_dev_monopoly(self, player, resource):

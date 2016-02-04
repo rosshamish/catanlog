@@ -1,5 +1,6 @@
 from behave import *
 import hexgrid
+from catan.game import Player
 import catanlog
 
 
@@ -54,4 +55,46 @@ def step_impl(context, piece, location):
 def step_impl(context):
     context.output = output_of(context.logger,
                                catanlog.CatanLog.log_player_buys_dev_card,
+                               context.cur_player)
+
+
+@when('they play a knight, move the robber to "{location}" and steal from "{color}"')
+def step_impl(context, location, color):
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_plays_dev_knight,
+                               context.cur_player,
+                               location,
+                               Player(1, 'name', color))
+
+
+@when('they play a road builder, building at "{location1}" and "{location2}"')
+def step_impl(context, location1, location2):
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_plays_dev_road_builder,
+                               context.cur_player,
+                               location1,
+                               location2)
+
+
+@when('they play a year of plenty, taking "{resource1}" and "{resource2}"')
+def step_impl(context, resource1, resource2):
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_plays_dev_year_of_plenty,
+                               context.cur_player,
+                               resource1,
+                               resource2)
+
+
+@when('they play a monopoly on "{resource}"')
+def step_impl(context, resource):
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_plays_dev_monopoly,
+                               context.cur_player,
+                               resource)
+
+
+@when('they play a victory point')
+def step_impl(context):
+    context.output = output_of(context.logger,
+                               catanlog.CatanLog.log_player_plays_dev_victory_point,
                                context.cur_player)
