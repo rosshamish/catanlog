@@ -58,7 +58,7 @@ class CatanLog(object):
         self._latest_timestamp = copy.deepcopy(self._game_start_timestamp)
         self._players = list()
 
-    def _dolog(self, content):
+    def _log(self, content):
         """
         Write a string to the log
         """
@@ -70,7 +70,7 @@ class CatanLog(object):
         """
         Write a string to the log, appending a newline
         """
-        self._dolog('{0}\n'.format(content))
+        self._log('{0}\n'.format(content))
 
     def eraseln(self):
         """
@@ -218,27 +218,27 @@ class CatanLog(object):
         :param to_port: list of tuples: [(2, 'wood'), (2, 'brick')]
         :param to_player: list of tuples: [(1, 'ore'), (1, 'sheep')]
         """
-        self._dolog('{0} trades '.format(player))
+        self._log('{0} trades '.format(player))
 
         # to_other items
-        self._dolog('[')
+        self._log('[')
         for i, (num, res) in enumerate(to_port):
             if i > 0:
-                self._dolog(',')
-            self._dolog('{0} {1}'.format(num, res))
-        self._dolog(']')
+                self._log(',')
+            self._log('{0} {1}'.format(num, res))
+        self._log(']')
 
-        self._dolog(' to port {0} for '.format(port))
+        self._log(' to port {0} for '.format(port))
 
         # to_player items
-        self._dolog('[')
+        self._log('[')
         for i, (num, res) in enumerate(to_player):
             if i > 0:
-                self._dolog(',')
-            self._dolog('{0} {1}'.format(num, res))
-        self._dolog(']')
+                self._log(',')
+            self._log('{0} {1}'.format(num, res))
+        self._log(']')
 
-        self._dolog('\n')
+        self._log('\n')
 
     def log_player_trades_with_other(self, player, to_other, other, to_player):
         """
@@ -247,27 +247,27 @@ class CatanLog(object):
         :param to_other: list of tuples: [(2, 'wood'), (2, 'brick')]
         :param to_player: list of tuples: [(1, 'ore'), (1, 'sheep')]
         """
-        self._dolog('{0} trades '.format(player))
+        self._log('{0} trades '.format(player))
 
         # to_other items
-        self._dolog('[')
+        self._log('[')
         for i, (num, res) in enumerate(to_other):
             if i > 0:
-                self._dolog(', ')
-            self._dolog('{0} {1}'.format(num, res))
-        self._dolog(']')
+                self._log(', ')
+            self._log('{0} {1}'.format(num, res))
+        self._log(']')
 
-        self._dolog(' to player {0} for '.format(other))
+        self._log(' to player {0} for '.format(other))
 
         # to_player items
-        self._dolog('[')
+        self._log('[')
         for i, (num, res) in enumerate(to_player):
             if i > 0:
-                self._dolog(', ')
-            self._dolog('{0} {1}'.format(num, res))
-        self._dolog(']')
+                self._log(', ')
+            self._log('{0} {1}'.format(num, res))
+        self._log(']')
 
-        self._dolog('\n')
+        self._log('\n')
 
     def log_player_plays_dev_knight(self, player, tile_id, victim):
         """
