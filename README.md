@@ -1,18 +1,20 @@
 catanlog
 --------
 
-This project introduces a machine-parsable, human-readable file format for describing a game of Catan.
+Human-readable, machine-parsable file format for describing a game of Catan.
+
+Also, a reference Python implementation: `catanlog.Writer`.
+
+The format is described by a human-readable behavioural specification in `spec`.
+The spec is not yet v1.0.0, so there might be some breaking changes until then.
 
 Each `.catan` file contains all publicly known information in the game. Therefore, each `.catan` file contains
 sufficient information to 'replay' a game (from a spectator's point of view). This allows statistics and analysis to
-be done after the fact, at any time.
+be done after the fact, which is very useful.
 
-This package is intended to support broadcast tooling (e.g. [catan-spectator](https://github.com/rosshamish/catan-spectator)), AI development (e.g. [goodcatan](https://github.com/rosshamish/goodcatan)), and other pursuits which benefit from well-defined game logs.
+This package is intended to support broadcast tooling (e.g. [catan-spectator](https://github.com/rosshamish/catan-spectator)), AI development (e.g. [goodcatan](https://github.com/rosshamish/goodcatan)), and other pursuits which would benefit from well-defined game logs.
 
-Until a formal specification is written, this implementation serves as the specification.
-The spec will likely be formalized once stable, after v1.0.0
-
-Supports Python 3. Might work in Python 2.
+Supports Python 3.
 
 > Author: Ross Anderson ([rosshamish](https://github.com/rosshamish))
 
